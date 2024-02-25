@@ -15,8 +15,9 @@ class MainActivity : AppCompatActivity() {
         val btn3 =findViewById<Button>(R.id.button3)
         val spinner =findViewById<Spinner>(R.id.spinner)
 
-        val intentList = Intent(applicationContext,ListActivity::class.java)
 
+        //boton para ir a la activity list explorar destinos
+        val intentList = Intent(applicationContext,ListActivity::class.java)
         btn1.setOnClickListener {
             startActivity(intentList)
         }
