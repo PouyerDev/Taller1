@@ -57,15 +57,24 @@ class ListActivity : AppCompatActivity() {
 
     }
 
-    // se llena el arreglo con los datos del json
+    // se llena el arreglo con los datos del json filtrando por categoria
     private fun fillArrayJson(json: JSONObject) {
         val destinosJson = json.getJSONArray("destinos")
         for (i in 0 until destinosJson.length()) {
             val jsonObject = destinosJson.getJSONObject(i)
-            arreglo.add(jsonObject)
+            val filterString = intent.getStringExtra("categoria")
+            val categoria = jsonObject.getString("categoria")
+
+            if (filterString == categoria) {
+                arreglo.add(jsonObject)
+            } else if (filterString == "Todas") {
+                arreglo.add(jsonObject)
+            }
+
 
         }
     }
+
 
     private fun listaOnClickBundle(lista: ListView, intentDetalle: Intent) {
         lista.setOnItemClickListener(object : AdapterView.OnItemClickListener {
