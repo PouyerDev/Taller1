@@ -60,18 +60,34 @@ class ListActivity : AppCompatActivity() {
     // se llena el arreglo con los datos del json filtrando por categoria
     private fun fillArrayJson(json: JSONObject) {
         val destinosJson = json.getJSONArray("destinos")
-        for (i in 0 until destinosJson.length()) {
-            val jsonObject = destinosJson.getJSONObject(i)
-            val filterString = intent.getStringExtra("categoria")
-            val categoria = jsonObject.getString("categoria")
+        val dataList = SharedData.dataList
+        val filterString = intent.getStringExtra("categoria")
 
-            if (filterString == categoria) {
-                arreglo.add(jsonObject)
-            } else if (filterString == "Todas") {
-                arreglo.add(jsonObject)
+        if (filterString == "favoritos"){
+            //Toast.makeText(applicationContext, dataList.lastIndex.toString(), Toast.LENGTH_LONG).show()
+            for (elemento in dataList){
+                for (j in 0 until destinosJson.length()){
+                    val jsonObject = destinosJson.getJSONObject(j)
+                    val nombre = jsonObject.getString("nombre")
+                    if (nombre == elemento) {
+                        arreglo.add(jsonObject)
+                    }
+                }
             }
+        }
+        else{
+            for (i in 0 until destinosJson.length()) {
+                val jsonObject = destinosJson.getJSONObject(i)
+                val categoria = jsonObject.getString("categoria")
+
+                if (filterString == categoria) {
+                    arreglo.add(jsonObject)
+                } else if (filterString == "Todas") {
+                    arreglo.add(jsonObject)
+                }
 
 
+            }
         }
     }
 
@@ -88,7 +104,7 @@ class ListActivity : AppCompatActivity() {
 
                 val bundle = Bundle()
                 bundle.putInt("id", arreglo[position].getInt("id"))
-                bundle.putString("Nombre", arreglo[position].getString("nombre"))
+                bundle.putString("nombre", arreglo[position].getString("nombre"))
                 bundle.putString("pais", arreglo[position].getString("pais"))
                 bundle.putString("categoria", arreglo[position].getString("categoria"))
                 bundle.putString("plan", arreglo[position].getString("plan"))
@@ -97,8 +113,6 @@ class ListActivity : AppCompatActivity() {
 
                 intentDetalle.putExtra("msj", bundle)
                 startActivity(intentDetalle)
-
-                Toast.makeText(baseContext, position.toString(), Toast.LENGTH_SHORT).show()
 
             }
         })
