@@ -65,20 +65,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun recommended() {
-        val cantidad = SharedData.dataList.size - 1
+        val maxOccurring = SharedData.categoryList.groupBy { it }.mapValues { it.value.size }.maxBy { it.value }.key
+        val cantidad = SharedData.categoryList.groupBy { it }.mapValues { it.value.size }.maxBy { it.value }.value - 1
         if (cantidad != -1){
             val rnds = (0..cantidad).random()
-            createBundle(SharedData.dataList[rnds])
+            createBundle(rnds, maxOccurring)
         }
         else{
-            createBundle("NA")
+            createBundle(1, "NA")
         }
     }
 
-    private fun createBundle(nombre: String) {
+    private fun createBundle(posicion: Int, categoria: String) {
         val intentDetalle = Intent(applicationContext, DetalleActivity::class.java)
         val json = JSONObject(loadJSONFromAsset())
-        val necesitado = fillArrayJson(json, nombre)
+        val necesitado = fillArrayJson(json, categoria, posicion)
         val bundle = Bundle()
         bundle.putInt("id", necesitado[0].toInt())
         bundle.putString("nombre", necesitado[1])
@@ -92,20 +93,26 @@ class MainActivity : AppCompatActivity() {
         startActivity(intentDetalle)
     }
 
-    private fun fillArrayJson(json: JSONObject, nombre: String): ArrayList<String> {
+    private fun fillArrayJson(json: JSONObject, categoria: String, posicion: Int): ArrayList<String> {
+        var contador = 0
         val destinosJson = json.getJSONArray("destinos")
         var arreglo: ArrayList<String> = ArrayList()
         for (i in 0 until destinosJson.length()) {
             val jsonObject = destinosJson.getJSONObject(i)
 
-            if (nombre == jsonObject.getString("nombre")) {
-                arreglo += jsonObject.getInt("id").toString()
-                arreglo += jsonObject.getString("nombre")
-                arreglo += jsonObject.getString("pais")
-                arreglo += jsonObject.getString("categoria")
-                arreglo += jsonObject.getString("plan")
-                arreglo += jsonObject.getInt("precio").toString()
-                return arreglo
+            if (categoria == jsonObject.getString("categoria")) {
+                if (contador == posicion){
+                    arreglo += jsonObject.getInt("id").toString()
+                    arreglo += jsonObject.getString("nombre")
+                    arreglo += jsonObject.getString("pais")
+                    arreglo += jsonObject.getString("categoria")
+                    arreglo += jsonObject.getString("plan")
+                    arreglo += jsonObject.getInt("precio").toString()
+                    return arreglo
+                }
+                else{
+                    contador++
+                }
             }
         }
         arreglo += "0"

@@ -31,14 +31,15 @@ class DetalleActivity : AppCompatActivity() {
         text5.text = infoRecibida?.getInt("precio").toString()
 
         button.setOnClickListener {
-            addFavorite(infoRecibida?.getString("nombre"))
+            addFavorite(infoRecibida?.getString("nombre"), infoRecibida?.getString("categoria"))
+            button.isEnabled = false
         }
 
 
     }
 
-    private fun addFavorite (nombre: String?){
-        if(nombre != null){
+    private fun addFavorite (nombre: String?, category: String?){
+        if(nombre != null && category != null){
             if(SharedData.dataList.contains(nombre)){
                 Toast.makeText(applicationContext, "La ubicación ya se encuentra en favoritos", Toast.LENGTH_LONG).show()
             }
@@ -46,7 +47,11 @@ class DetalleActivity : AppCompatActivity() {
                 SharedData.dataList.apply {
                     add(nombre)
                 }
+                SharedData.categoryList.apply {
+                    add(category)
+                }
                 Toast.makeText(applicationContext, "Agregado a favoritos", Toast.LENGTH_LONG).show()
+
             }
         }
 
